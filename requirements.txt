@@ -1,0 +1,12 @@
+torch
+torchaudio
+numpy
+pretty_midi
+unidecode
+yt-dlp
+gdown
+mir_eval
+librosa
+matplotlib
+pandas
+torchcodec
