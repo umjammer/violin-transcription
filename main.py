@@ -1,4 +1,5 @@
 import argparse
+import os
 import sys
 import torch
 from musc.model import PretrainedModel
@@ -14,8 +15,8 @@ def main():
     
     args = parser.parse_args()
     
-    input_wav = args.input_wav
-    output_mid = args.output_mid
+    input_wav = os.path.expanduser(args.input_wav)
+    output_mid = os.path.expanduser(args.output_mid)
     
     if not os.path.exists(input_wav):
         print(f"Error: Input file '{input_wav}' does not exist.")

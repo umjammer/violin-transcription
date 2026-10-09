@@ -1,6 +1,7 @@
 from torch import nn
 import torch
 import torchaudio
+import soundfile as sf
 from typing import List, Optional, Tuple
 import pathlib
 from scipy.signal import medfilt
@@ -40,8 +41,18 @@ class PitchEstimator(nn.Module):
         :return: frames: (n_big_frames, frame_length), times: (n_small_frames,)
         """
         if isinstance(audio, str) or isinstance(audio, pathlib.Path):
-            audio, sample_rate = torchaudio.load(audio, normalize=True)
-            audio = audio.mean(axis=0)  # convert to mono
+            try:
+                data, sample_rate = sf.read(audio, dtype='float32')
+                if data.ndim > 1:
+                    data = data.mean(axis=-1)
+                audio = torch.from_numpy(data)
+            except Exception:
+                try:
+                    audio, sample_rate = torchaudio.load(audio, normalize=True)
+                    audio = audio.mean(axis=0)  # convert to mono
+                except Exception:
+                    data, sample_rate = librosa.load(audio, sr=None, mono=True)
+                    audio = torch.from_numpy(data)
             if sample_rate != self.sr:
                 audio = torchaudio.functional.resample(audio, sample_rate, self.sr)
         elif isinstance(audio, np.ndarray):

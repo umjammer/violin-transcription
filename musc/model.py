@@ -238,7 +238,8 @@ class PretrainedModel(FourHeads):
         self.download_weights(instrument)
         package_dir = os.path.dirname(os.path.realpath(__file__))
         filename = "{}_model.pt".format(instrument)
-        self.load_state_dict(torch.load(os.path.join(package_dir, filename)))
+        device = 'cuda' if torch.cuda.is_available() else 'cpu'
+        self.load_state_dict(torch.load(os.path.join(package_dir, filename), map_location=device))
 
     def download_weights(self, instrument):
         weight_file = "{}_model.pt".format(instrument)
